@@ -1,40 +1,41 @@
 import { Link, Stack } from 'expo-router';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 
-import { Text, View } from '@/components/Themed';
+import { Screen } from '@/components/ui/Screen';
+import { useTheme } from '@/theme/ThemeProvider';
+import { spacing } from '@/theme/tokens';
 
 export default function NotFoundScreen() {
+  const { colors } = useTheme();
+
   return (
     <>
-      <Stack.Screen options={{ title: 'Oops!' }} />
-      <View style={styles.container}>
-        <Text style={styles.title}>This screen doesn't exist.</Text>
-
+      <Stack.Screen options={{ title: '찾을 수 없음', headerShown: false }} />
+      <Screen edges={['top', 'bottom']}>
+        <Text style={[styles.title, { color: colors.text }]}>화면을 찾을 수 없어요.</Text>
         <Link href="/" style={styles.link}>
-          <Text style={styles.linkText}>Go to home screen!</Text>
+          <Text style={[styles.linkText, { color: colors.accent }]}>홈으로 돌아가기</Text>
         </Link>
-      </View>
+      </Screen>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-  },
   title: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    marginTop: spacing.xxxl,
+    paddingHorizontal: spacing.xl,
+    fontSize: 22,
+    lineHeight: 28,
+    fontWeight: '700',
   },
   link: {
-    marginTop: 15,
-    paddingVertical: 15,
+    marginTop: spacing.lg,
+    paddingHorizontal: spacing.xl,
   },
   linkText: {
-    fontSize: 14,
-    color: '#2e78b7',
+    fontSize: 16,
+    lineHeight: 22,
+    fontWeight: '600',
   },
 });
