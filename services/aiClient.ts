@@ -12,6 +12,11 @@ import type { Memo } from '@/types/memo';
 
 const TIMEOUT_MS = 30_000;
 
+function apiKeyHeaders(): Record<string, string> {
+  const apiKey = process.env.EXPO_PUBLIC_API_SECRET_KEY?.trim();
+  return apiKey ? { 'x-api-key': apiKey } : {};
+}
+
 export type AiErrorCode = 'unconfigured' | 'unauthorized' | 'network' | 'limited' | 'invalid' | 'upstream' | 'too_large';
 
 export class AiError extends Error {
@@ -73,6 +78,7 @@ async function post(path: string, body: unknown): Promise<unknown> {
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
+        ...apiKeyHeaders(),
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
       body: JSON.stringify(body),
@@ -105,7 +111,10 @@ export async function checkAiHealth(): Promise<{ reachable: boolean; aiConfigure
   try {
     const token = settings.aiProxyToken.trim();
     const response = await fetch(`${base}/v1/health`, {
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      headers: {
+        ...apiKeyHeaders(),
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
       signal: controller.signal,
     });
     const payload: unknown = await response.json().catch(() => null);
