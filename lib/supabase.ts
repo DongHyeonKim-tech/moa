@@ -6,17 +6,19 @@ import { AppState, Platform } from 'react-native';
 
 import type { Database } from '@/types/database';
 
-function requiredPublicEnv(name: 'EXPO_PUBLIC_SUPABASE_URL' | 'EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY') {
-  const value = process.env[name];
-  if (!value) {
-    throw new Error(`${name} 값이 없습니다.`);
-  }
-  return value;
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
+const supabasePublishableKey = process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+
+if (!supabaseUrl) {
+  throw new Error('EXPO_PUBLIC_SUPABASE_URL 값이 없습니다.');
+}
+if (!supabasePublishableKey) {
+  throw new Error('EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY 값이 없습니다.');
 }
 
 export const supabase = createClient<Database>(
-  requiredPublicEnv('EXPO_PUBLIC_SUPABASE_URL'),
-  requiredPublicEnv('EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY'),
+  supabaseUrl,
+  supabasePublishableKey,
   {
     auth: {
       ...(Platform.OS === 'web' ? {} : { storage: AsyncStorage }),
