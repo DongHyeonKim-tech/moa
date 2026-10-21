@@ -18,6 +18,11 @@ const ICONS = {
   refresh: { ios: 'arrow.clockwise', android: 'refresh', web: 'refresh' },
   restore: { ios: 'arrow.uturn.backward', android: 'restore', web: 'restore' },
   chevronRight: { ios: 'chevron.right', android: 'chevron_right', web: 'chevron_right' },
+  image: { ios: 'photo', android: 'image', web: 'image' },
+  eye: { ios: 'eye', android: 'visibility', web: 'visibility' },
+  sparkle: { ios: 'sparkles', android: 'auto_awesome', web: 'auto_awesome' },
+  link: { ios: 'link', android: 'link', web: 'link' },
+  check: { ios: 'checkmark', android: 'check', web: 'check' },
 } as const;
 
 export type IconName = keyof typeof ICONS;

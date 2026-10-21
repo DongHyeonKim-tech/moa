@@ -1,0 +1,9 @@
+export const MIN_ANALYSIS_LENGTH = 20;
+export const MAX_ORGANIZE_CHARS = 16_000;
+export const MAX_ANALYSIS_CHARS = 16_000;
+export const MAX_MERGE_MEMOS = 8;
+export const MAX_MERGE_CHARS = 24_000;
+export const MAX_RELATED_CANDIDATES = 8;
+export const MAX_DRAFT_PROMPT_CHARS = 2_000;
+export const MAX_DRAFT_CONTEXT_CHARS = 8_000;
+export const ANALYSIS_IDLE_MS = 8_000;

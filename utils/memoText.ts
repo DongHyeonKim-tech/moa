@@ -1,12 +1,13 @@
+import { toPlainText } from '@/services/markdown';
 import type { Memo } from '@/types/memo';
 
-export function displayTitle(memo: Pick<Memo, 'title' | 'content'>): string {
+export function displayTitle(memo: Pick<Memo, 'title' | 'contentMarkdown'>): string {
   const title = memo.title.trim();
   if (title) {
     return title;
   }
 
-  const firstLine = memo.content
+  const firstLine = toPlainText(memo.contentMarkdown)
     .split('\n')
     .map((line) => line.trim())
     .find((line) => line.length > 0);
@@ -18,8 +19,12 @@ export function displayTitle(memo: Pick<Memo, 'title' | 'content'>): string {
   return firstLine.length > 48 ? `${firstLine.slice(0, 48)}…` : firstLine;
 }
 
-export function displayPreview(memo: Pick<Memo, 'title' | 'content'>): string {
-  const lines = memo.content
+export function displayPreview(memo: Pick<Memo, 'title' | 'contentMarkdown' | 'aiSummary'>): string {
+  if (memo.aiSummary?.trim()) {
+    return memo.aiSummary.trim();
+  }
+
+  const lines = toPlainText(memo.contentMarkdown)
     .split('\n')
     .map((line) => line.trim())
     .filter((line) => line.length > 0);

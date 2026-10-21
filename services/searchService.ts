@@ -20,7 +20,7 @@ export function searchText(memos: readonly Memo[], query: SearchQuery): SearchHi
   return memos
     .filter((memo) => !memo.isDeleted)
     .filter((memo) => {
-      const haystack = `${memo.title}\n${memo.content}\n${memo.tags.join(' ')}`.toLowerCase();
+      const haystack = `${memo.title}\n${memo.contentMarkdown}\n${memo.aiSummary ?? ''}\n${memo.tags.map((tag) => tag.name).join(' ')}`.toLowerCase();
       return terms.every((term) => haystack.includes(term));
     })
     .sort((left, right) => right.updatedAt.localeCompare(left.updatedAt))

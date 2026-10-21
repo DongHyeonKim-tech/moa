@@ -1,31 +1,23 @@
+import { normalizeTag, tagsForDraft } from '@/services/tagPolicy';
 import type { Memo, MemoDraft } from '@/types/memo';
+import { userTagNames } from '@/types/memo';
 
-const MAX_TAG_LENGTH = 20;
 const MAX_TAGS = 12;
 
 export function isBlankDraft(draft: MemoDraft): boolean {
-  return draft.title.trim().length === 0 && draft.content.trim().length === 0 && draft.tags.length === 0;
+  return draft.title.trim().length === 0 && draft.contentMarkdown.trim().length === 0 && draft.userTags.length === 0;
 }
 
 export function draftFromMemo(memo: Memo | null | undefined): MemoDraft {
   if (!memo) {
-    return { title: '', content: '', tags: [] };
+    return { title: '', contentMarkdown: '', userTags: [] };
   }
 
   return {
     title: memo.title,
-    content: memo.content,
-    tags: memo.tags,
+    contentMarkdown: memo.contentMarkdown,
+    userTags: userTagNames(memo.tags),
   };
-}
-
-export function normalizeTag(raw: string): string | null {
-  const tag = raw.trim().replace(/^#/, '').replace(/\s+/g, ' ');
-  if (!tag) {
-    return null;
-  }
-
-  return tag.slice(0, MAX_TAG_LENGTH);
 }
 
 export function addTag(tags: readonly string[], raw: string): string[] {
@@ -58,5 +50,46 @@ export function tagsEqual(left: readonly string[], right: readonly string[]): bo
 }
 
 export function contentChanged(memo: Memo, draft: MemoDraft): boolean {
-  return memo.title !== draft.title || memo.content !== draft.content || !tagsEqual(memo.tags, draft.tags);
+  return (
+    memo.title !== draft.title ||
+    memo.contentMarkdown !== draft.contentMarkdown ||
+    !tagsEqual(userTagNames(memo.tags), draft.userTags)
+  );
+}
+
+export function nextMemoFromDraft(current: Memo | null, id: string, draft: MemoDraft, now: string): Memo | null {
+  if (!current && isBlankDraft(draft)) {
+    return null;
+  }
+  if (current && !contentChanged(current, draft)) {
+    return current;
+  }
+
+  const tags = tagsForDraft(current?.tags ?? [], draft.userTags);
+  if (current) {
+    return {
+      ...current,
+      title: draft.title,
+      contentMarkdown: draft.contentMarkdown,
+      tags,
+      updatedAt: now,
+    };
+  }
+
+  return {
+    id,
+    title: draft.title,
+    contentMarkdown: draft.contentMarkdown,
+    aiSummary: null,
+    tags,
+    isFavorite: false,
+    isPinned: false,
+    isDeleted: false,
+    deletedAt: null,
+    createdAt: now,
+    updatedAt: now,
+    lastViewedAt: now,
+    analyzedContentHash: null,
+    aiAnalysisStatus: 'idle',
+  };
 }

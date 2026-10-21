@@ -12,12 +12,13 @@ type MemoCardProps = {
   onPress: () => void;
   onLongPress?: () => void;
   eyebrow?: string;
+  selected?: boolean;
 };
 
-export function MemoCard({ memo, onPress, onLongPress, eyebrow }: MemoCardProps) {
+export function MemoCard({ memo, onPress, onLongPress, eyebrow, selected = false }: MemoCardProps) {
   const { colors } = useTheme();
   const preview = displayPreview(memo);
-  const tags = memo.tags.slice(0, 3);
+  const tags = memo.tags.slice(0, 3).map((tag) => tag.name);
 
   return (
     <Pressable
@@ -29,7 +30,7 @@ export function MemoCard({ memo, onPress, onLongPress, eyebrow }: MemoCardProps)
         styles.card,
         {
           backgroundColor: pressed ? colors.surfaceMuted : colors.surface,
-          borderColor: colors.border,
+          borderColor: selected ? colors.accent : colors.border,
         },
       ]}>
       {eyebrow ? <Text style={[styles.eyebrow, { color: colors.accentText }]}>{eyebrow}</Text> : null}

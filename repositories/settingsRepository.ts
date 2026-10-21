@@ -4,8 +4,13 @@ import type { AppSettings, ThemePreference } from '@/types/settings';
 
 const SETTINGS_STORAGE_KEY = 'moa.settings.v1';
 
+export const defaultAiProxyUrl = process.env.EXPO_PUBLIC_AI_PROXY_URL ?? 'http://127.0.0.1:8787';
+
 export const defaultSettings: AppSettings = {
   theme: 'system',
+  aiConsent: false,
+  aiProxyUrl: defaultAiProxyUrl,
+  aiProxyToken: '',
 };
 
 function isThemePreference(value: unknown): value is ThemePreference {
@@ -18,8 +23,13 @@ export function parseSettings(value: unknown): AppSettings {
   }
 
   const theme = 'theme' in value ? value.theme : undefined;
+  const aiProxyUrl = 'aiProxyUrl' in value && typeof value.aiProxyUrl === 'string' ? value.aiProxyUrl : defaultSettings.aiProxyUrl;
+  const aiProxyToken = 'aiProxyToken' in value && typeof value.aiProxyToken === 'string' ? value.aiProxyToken : '';
   return {
     theme: isThemePreference(theme) ? theme : defaultSettings.theme,
+    aiConsent: 'aiConsent' in value && value.aiConsent === true,
+    aiProxyUrl: aiProxyUrl.trim() || defaultSettings.aiProxyUrl,
+    aiProxyToken,
   };
 }
 

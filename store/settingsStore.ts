@@ -1,19 +1,29 @@
 import { create } from 'zustand';
 
 import { defaultSettings, settingsRepository } from '@/repositories/settingsRepository';
-import type { ThemePreference } from '@/types/settings';
+import type { AppSettings, ThemePreference } from '@/types/settings';
 
-type SettingsState = {
-  theme: ThemePreference;
+type SettingsState = AppSettings & {
   hydrated: boolean;
   hydrate: () => Promise<void>;
   setTheme: (theme: ThemePreference) => Promise<void>;
+  setAiConsent: (aiConsent: boolean) => Promise<void>;
+  setAiProxyUrl: (aiProxyUrl: string) => Promise<void>;
+  setAiProxyToken: (aiProxyToken: string) => Promise<void>;
 };
 
 let settingsWrite: Promise<void> = Promise.resolve();
 
+function persist(get: () => SettingsState): Promise<void> {
+  const { theme, aiConsent, aiProxyUrl, aiProxyToken } = get();
+  settingsWrite = settingsWrite.catch(() => undefined).then(() =>
+    settingsRepository.save({ theme, aiConsent, aiProxyUrl, aiProxyToken }),
+  );
+  return settingsWrite;
+}
+
 export const useSettingsStore = create<SettingsState>((set, get) => ({
-  theme: defaultSettings.theme,
+  ...defaultSettings,
   hydrated: false,
 
   async hydrate() {
@@ -23,7 +33,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
 
     try {
       const settings = await settingsRepository.load();
-      set({ theme: settings.theme, hydrated: true });
+      set({ ...settings, hydrated: true });
     } catch {
       set({ hydrated: true });
     }
@@ -31,7 +41,21 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
 
   async setTheme(theme) {
     set({ theme });
-    settingsWrite = settingsWrite.catch(() => undefined).then(() => settingsRepository.save({ theme: get().theme }));
-    await settingsWrite;
+    await persist(get);
+  },
+
+  async setAiConsent(aiConsent) {
+    set({ aiConsent });
+    await persist(get);
+  },
+
+  async setAiProxyUrl(aiProxyUrl) {
+    set({ aiProxyUrl });
+    await persist(get);
+  },
+
+  async setAiProxyToken(aiProxyToken) {
+    set({ aiProxyToken });
+    await persist(get);
   },
 }));

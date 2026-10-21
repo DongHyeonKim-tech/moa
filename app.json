@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Moa",
+    "name": "moa",
     "slug": "moa",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -8,7 +8,12 @@
     "scheme": "moa",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSAppTransportSecurity": {
+          "NSAllowsLocalNetworking": true
+        }
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -18,7 +23,10 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "softwareKeyboardLayoutMode": "resize"
+      "softwareKeyboardLayoutMode": "resize",
+      "usesCleartextTraffic": false,
+      "permissions": ["android.permission.RECORD_AUDIO"],
+      "package": "com.dhkimdev.moa"
     },
     "web": {
       "bundler": "metro",
@@ -34,10 +42,30 @@
           "resizeMode": "contain",
           "backgroundColor": "#F6F5F2"
         }
+      ],
+      "expo-sqlite",
+      "expo-image",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "메모에 사진을 넣기 위해 사진 보관함 접근이 필요해요."
+        }
       ]
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "47c32ecd-9d1d-405b-bf9a-1cd9aa93778c"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/47c32ecd-9d1d-405b-bf9a-1cd9aa93778c"
     }
   }
 }

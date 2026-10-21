@@ -16,9 +16,9 @@ export function collectTags(memos: readonly Memo[]): string[] {
 
   for (const memo of activeMemos(memos)) {
     for (const tag of memo.tags) {
-      const key = tag.toLowerCase();
+      const key = tag.name.toLowerCase();
       if (!tags.has(key)) {
-        tags.set(key, tag);
+        tags.set(key, tag.name);
       }
     }
   }
@@ -61,7 +61,7 @@ export function listMemos(memos: readonly Memo[], options: ListOptions): Memo[] 
   }
   if (options.tag) {
     const tag = options.tag.toLowerCase();
-    list = list.filter((memo) => memo.tags.some((item) => item.toLowerCase() === tag));
+    list = list.filter((memo) => memo.tags.some((item) => item.name.toLowerCase() === tag));
   }
   if (options.query.trim()) {
     const matched = new Set(searchMemos(list, options.query).map((hit) => hit.memo.id));
